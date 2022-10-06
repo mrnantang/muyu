@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>电子木鱼</title>
     <link rel="stylesheet" href="./asset/css/default.css" />
-    <link rel="shortcut icon" href="#" />
+    <link rel="shortcut icon" href="./asset/img/icon.jpg" />
     <!-- 引入样式 -->
     <link rel="stylesheet" href="./asset/css/element.css" />
     <style>
@@ -26,7 +26,7 @@
         margin: 0 auto;
       }
       .sf {
-        animation: suofang 0.2s;
+        animation: suofang 0.3s;
       }
       .gongde {
         position: absolute;
@@ -38,7 +38,7 @@
         font-size: 21px;
       }
       .gongdejiayi {
-        animation: textMove 0.5s;
+        animation: textMove 0.6s;
       }
       .gongdeLuBox {
         position: absolute;
@@ -50,6 +50,7 @@
         border: 1px solid white;
         background-color: black;
         z-index: 3;
+        animation: showBox 0.5s;
       }
       .gongdeLuBox h1 {
         text-align: center;
@@ -87,15 +88,23 @@
         height: 32px;
         background: url("asset/img/关闭.png") no-repeat;
       }
-      .userNameBox{
+      .userNameBox {
         width: 70%;
         margin: 20% auto 0;
-       }
-       .shangchuanGD{
+      }
+      .shangchuanGD {
         width: 70%;
         margin: 20% auto 0;
         text-align: center;
-        }
+      }
+      /* 反馈 */
+      .feedBack {
+        width: 90%;
+        margin: 20% auto 0;
+      }
+      .feedBack div {
+        text-align: center;
+      }
       /* 木鱼 */
       @keyframes suofang {
         50% {
@@ -116,7 +125,15 @@
           opacity: 0;
         }
       }
-
+      /* 弹窗出现动画 */
+      @keyframes showBox {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
       [v-cloak] {
         display: none;
       }
@@ -155,19 +172,42 @@
       <!-- 上传功德 -->
       <div class="gongdeLuBox" v-show="shuangchuanBox">
         <div class="close" @click="closeGDL"></div>
-        <div style="text-align: center;width: 80%;margin: 30% auto 0;font-size: 30px;">一天只能提交一次</div>
+        <div
+          style="
+            text-align: center;
+            width: 90%;
+            margin: 30% auto 0;
+            font-size: 30px;
+          "
+        >
+          一天只能上传一次哦
+        </div>
         <div class="userNameBox">
           <el-input
-          type="text"
-          placeholder="请输入名字"
-          v-model="text"
-          maxlength="10"
-          show-word-limit
-        >
-        </el-input>
+            type="text"
+            placeholder="请输入名字"
+            v-model.trim="text"
+            maxlength="10"
+            show-word-limit
+          >
+          </el-input>
         </div>
         <div class="shangchuanGD">
-          <el-button type="info" @click="openGD">上传功德</el-button>
+          <el-button
+            type="success"
+            :plain="true"
+            :disabled="isCommit"
+            @click="GDbtn"
+            >上传功德</el-button
+          >
+        </div>
+        <!-- 反馈 -->
+        <div class="feedBack">
+          <h3>BUG反馈：</h3>
+          <br />
+          <div>前端 : 1210946999@qq.com</div>
+          <div>后端 : 1063720909@qq.com</div>
+          <div style="color:pink">美术制作 :多多 </div>
         </div>
       </div>
     </div>
@@ -188,14 +228,21 @@
             Data: [],
             gongdeLuBox: false,
             shuangchuanBox: false,
+            isCommit: "",
             text: "",
+            sendMsg: "",
           };
         },
         created() {
           this.getData();
+          this.Time();
         },
         mounted() {
           this.dangDang();
+          let sendMsg = localStorage.getItem("sendMsg");
+          if (sendMsg == null) {
+            this.sendMsg = 0;
+          }
         },
         methods: {
           async getData() {
@@ -235,12 +282,58 @@
           closeGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
           },
-          // 提交功德
+          // 上传功德盒子
           commitGD() {
             this.shuangchuanBox = !this.shuangchuanBox;
+            if (this.text == "" || this.count == 0) {
+              this.isCommit = true;
+            }
           },
           closeGDL() {
             this.shuangchuanBox = !this.shuangchuanBox;
+          },
+          // 上传功德
+          GDbtn() {
+            if (this.sendMsg == 0) {
+              // 用户储存当前时间
+              const userTime = new Date().getTime();
+              localStorage.setItem("userTime", userTime);
+              localStorage.setItem("sendMsg", 1);
+              this.sendMsg = 1;
+              this.isCommit = true;
+              this.$message({
+                message: "恭喜你，功德上传成功",
+                type: "success",
+              });
+              this.text = "";
+            } else {
+              this.$message.error("一天只能上传一次哦");
+            }
+          },
+          Time() {
+            // 当前时间
+            const date = new Date().getTime();
+            // 一天的时间
+            let EXPIRESTIME = 86400000;
+            // 获取用户提交的时间
+            let userTime = localStorage.getItem("userTime");
+            if (userTime == null) {
+              localStorage.setItem("userTime", date);
+            }
+            let count = localStorage.getItem("count");
+            if (date - userTime > EXPIRESTIME) {
+              localStorage.setItem("count", 0);
+              localStorage.setItem("sendMsg", 0);
+            }
+          },
+        },
+        watch: {
+          text(newName, oldName) {
+            if (newName !== "") {
+              this.isCommit = false;
+            } else {
+              this.isCommit = true;
+            }
           },
         },
       };
