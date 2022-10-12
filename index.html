@@ -230,10 +230,11 @@
             shuangchuanBox: false,
             isCommit: "",
             text: "",
-            sendMsg: "",
+            sendMsg: 0,
           };
         },
         created() {
+          this.sendMsg = localStorage.getItem("sendMsg");
           this.getData();
           this.Time();
         },
@@ -246,7 +247,7 @@
         },
         methods: {
           async getData() {
-            const { data } = await axios.get("./asset/test.json");
+            const { data } = await axios.get("http://42.192.41.168:8083/rankingList");
             this.Data = data.userBox;
           },
           // 敲击次数
@@ -276,8 +277,9 @@
               localStorage.setItem("count", this.count);
             }
           },
-          openGD() {
+          async  openGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
+            this.getData()
           },
           closeGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
@@ -285,6 +287,7 @@
           // 上传功德盒子
           commitGD() {
             this.shuangchuanBox = !this.shuangchuanBox;
+            this.text = "";
             if (this.text == "" || this.count == 0) {
               this.isCommit = true;
             }
@@ -308,6 +311,7 @@
               this.text = "";
             } else {
               this.$message.error("一天只能上传一次哦");
+              this.text = "";
             }
           },
           Time() {
@@ -317,6 +321,7 @@
             let EXPIRESTIME = 86400000;
             // 获取用户提交的时间
             let userTime = localStorage.getItem("userTime");
+            // 用户从来没点开过就记录当前时间
             if (userTime == null) {
               localStorage.setItem("userTime", date);
             }
