@@ -51,6 +51,7 @@
         background-color: black;
         z-index: 3;
         animation: showBox 0.5s;
+        overflow-y: scroll;
       }
       .gongdeLuBox h1 {
         text-align: center;
@@ -69,7 +70,7 @@
         justify-content: space-between;
         color: white;
       }
-      .userName:nth-child(4) {
+      .userName:nth-child(6) {
         font-size: 25px;
         font-weight: bold;
         color: gold;
@@ -164,6 +165,8 @@
         <div class="close" @click="closeGD"></div>
         <h1>功德录</h1>
         <br />
+        <h3 style="text-align: center">每日0点更新</h3>
+        <br />
         <div class="userName" v-for="(item,index) in Data" :key="index">
           <div>{{index+1}}.&nbsp;&nbsp;{{item.userName}}</div>
           <div>{{item.count}}</div>
@@ -207,7 +210,7 @@
           <br />
           <div>前端 : 1210946999@qq.com</div>
           <div>后端 : 1063720909@qq.com</div>
-          <div style="color:pink">美术制作 :多多 </div>
+          <div style="color: pink">美术制作 :多多</div>
         </div>
       </div>
     </div>
@@ -237,22 +240,23 @@
           this.sendMsg = localStorage.getItem("sendMsg");
           this.getData();
           this.Time();
+          this.GetFristTime();
         },
         mounted() {
           this.dangDang();
-          let sendMsg = localStorage.getItem("sendMsg");
-          if (sendMsg == null) {
-            this.sendMsg = 0;
-          }
         },
         methods: {
           async getData() {
-            const { data } = await axios.get("http://42.192.41.168:8083/rankingList");
+            const { data } = await axios.get("./asset/test.json");
             this.Data = data.userBox;
           },
           // 敲击次数
           dangDang() {
             let count = localStorage.getItem("count");
+            let sendMsg = localStorage.getItem("sendMsg");
+            if (sendMsg == null) {
+              this.sendMsg = 0;
+            }
             this.count = count;
             if (count == null) {
               this.count = 0;
@@ -277,9 +281,9 @@
               localStorage.setItem("count", this.count);
             }
           },
-          async  openGD() {
+          async openGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
-            this.getData()
+            this.getData();
           },
           closeGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
@@ -299,8 +303,6 @@
           GDbtn() {
             if (this.sendMsg == 0) {
               // 用户储存当前时间
-              const userTime = new Date().getTime();
-              localStorage.setItem("userTime", userTime);
               localStorage.setItem("sendMsg", 1);
               this.sendMsg = 1;
               this.isCommit = true;
@@ -317,19 +319,33 @@
           Time() {
             // 当前时间
             const date = new Date().getTime();
-            // 一天的时间
-            let EXPIRESTIME = 86400000;
-            // 获取用户提交的时间
-            let userTime = localStorage.getItem("userTime");
-            // 用户从来没点开过就记录当前时间
-            if (userTime == null) {
-              localStorage.setItem("userTime", date);
-            }
+            // 0点的时间
+            let CLEARTIME = localStorage.getItem("CLEARTIME");
             let count = localStorage.getItem("count");
-            if (date - userTime > EXPIRESTIME) {
+            if (date > CLEARTIME) {
               localStorage.setItem("count", 0);
               localStorage.setItem("sendMsg", 0);
+              localStorage.setItem("nextDay", false);
             }
+          },
+          // 以下是获取当天23点的时间。
+          GetFristTime() {
+            let nextDay = localStorage.getItem("nextDay");
+            if (nextDay == null) {
+              localStorage.setItem("nextDay", false);
+            }
+            nextDay = localStorage.getItem("nextDay");
+            // 当日23点59分59秒的时间戳
+            if (nextDay == "false") {
+              this.getClearTime();
+            }
+          },
+          getClearTime() {
+            const CLEARTIME = new Date(
+              new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1
+            ).getTime();
+            localStorage.setItem("CLEARTIME", CLEARTIME);
+            localStorage.setItem("nextDay", true);
           },
         },
         watch: {
