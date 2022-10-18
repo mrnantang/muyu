@@ -72,7 +72,7 @@
           justify-content: space-between;
           color: white;
         }
-        .userName:nth-child(6) {
+        .userName:nth-child(4) {
           font-size: 25px;
           font-weight: bold;
           color: gold;
@@ -174,7 +174,7 @@
           justify-content: space-between;
           color: white;
         }
-        .userName:nth-child(6) {
+        .userName:nth-child(4) {
           font-size: 25px;
           font-weight: bold;
           color: gold;
@@ -267,15 +267,14 @@
       <audio ref="ding" src="./asset/audio/muyu.mp3"></audio>
       <!-- 提交与展示功德录 -->
       <div class="btns">
-        <el-button type="info" @click="commitGD">上传功德</el-button>
-        <el-button type="info" @click="openGD">功德录</el-button>
+        <el-button type="warning" @click="openGD">功德榜</el-button>
+        <el-button type="success" @click="commitGD">上传功德</el-button>
+        <el-button type="warning" @click="TodayGD">今日功德</el-button>
       </div>
       <!-- 功德录 -->
       <div class="gongdeLuBox" v-show="gongdeLuBox">
         <div class="close" @click="closeGD"></div>
-        <h1>功德录</h1>
-        <br />
-        <h3 style="text-align: center">每72小时更新</h3>
+        <h1>功德榜</h1>
         <br />
         <div class="userName" v-for="(item,index) in Data" :key="index">
           <div>{{index+1}}.&nbsp;&nbsp;{{item.userName}}</div>
@@ -358,7 +357,13 @@
           this.dangDang();
         },
         methods: {
+          // 总功德录数据
           async getData() {
+            const { data } = await axios.get("./asset/test.json");
+            this.Data = data.userBox;
+          },
+          // 今日功德数据
+          async getTodayData() {
             const { data } = await axios.get("./asset/test.json");
             this.Data = data.userBox;
           },
@@ -393,9 +398,13 @@
               localStorage.setItem("count", this.count);
             }
           },
-          async openGD() {
+           openGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
             this.getData();
+          },
+           TodayGD(){
+            this.gongdeLuBox = !this.gongdeLuBox;
+            this.getTodayData();
           },
           closeGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
