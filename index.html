@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>电子木鱼</title>
     <link rel="stylesheet" href="./asset/css/default.css" />
     <link rel="shortcut icon" href="./asset/img/icon.jpg" />
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="./asset/css/element.css" />
     <style>
       /* 平板以及手机的尺寸大小 */
-      @media screen and (max-width: 830px) {
+      @media screen and (max-width: 530px) {
         body {
           background-color: black;
           color: #fff;
@@ -114,7 +114,7 @@
         }
       }
       /* 电脑尺寸大小 */
-      @media screen and (min-width: 830px) {
+      @media screen and (min-width: 531px) {
         body {
           background-color: black;
           color: #fff;
@@ -267,14 +267,14 @@
       <audio ref="ding" src="./asset/audio/muyu.mp3"></audio>
       <!-- 提交与展示功德录 -->
       <div class="btns">
-        <el-button type="warning" @click="openGD">功德榜</el-button>
+        <el-button type="warning" @click="openGD">功德录</el-button>
         <el-button type="success" @click="commitGD">上传功德</el-button>
         <el-button type="warning" @click="TodayGD">今日功德</el-button>
       </div>
       <!-- 功德录 -->
       <div class="gongdeLuBox" v-show="gongdeLuBox">
         <div class="close" @click="closeGD"></div>
-        <h1>功德榜</h1>
+        <h1> {{ListOfQualities}} </h1>
         <br />
         <div class="userName" v-for="(item,index) in Data" :key="index">
           <div>{{index+1}}.&nbsp;&nbsp;{{item.userName}}</div>
@@ -323,15 +323,19 @@
         </div>
       </div>
       <!-- 版本号 -->
-      <div class="version">version:1.0.4</div>
+      <div class="version">version:1.0.5</div>
     </div>
     <!-- 导入 Vue -->
     <script src="./asset/js/Vue.js"></script>
     <script src="./asset/js/axios.js"></script>
+    <!-- 禁止IOS用户双击缩放 -->
+    <script src="./asset/js/BanZoom.js"></script>
     <!-- 引入组件库 -->
     <script src="./asset/js/elementUI.js"></script>
-    <script>
+    <script type="module">
+   import encryptRC4 from './asset/js/RC4.js';
       let isclick = true;
+// console.log("解密",decryptRC4("ccf2", "100"));
       const App = {
         data() {
           return {
@@ -345,6 +349,7 @@
             isCommit: "",
             text: "",
             sendMsg: 0,
+            ListOfQualities:""
           };
         },
         created() {
@@ -395,15 +400,17 @@
               });
               this.sf = true;
               this.count++;
-              localStorage.setItem("count", this.count);
+              localStorage.setItem("count",this.count);
             }
           },
            openGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
+            this.ListOfQualities = "功德录"
             this.getData();
           },
            TodayGD(){
             this.gongdeLuBox = !this.gongdeLuBox;
+            this.ListOfQualities = "今日功德榜"
             this.getTodayData();
           },
           closeGD() {
@@ -427,6 +434,11 @@
               localStorage.setItem("sendMsg", 1);
               this.sendMsg = 1;
               this.isCommit = true;
+              // 带有加密的敲击数字
+              /* aixos.post(url,data:{
+                  text:this.text,
+                  count:encryptRC4(this.count)
+              }) */
               this.$message({
                 message: "恭喜你，功德上传成功",
                 type: "success",
