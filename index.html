@@ -335,6 +335,7 @@
     <script type="module">
    import encryptRC4 from './asset/js/RC4.js';
       let isclick = true;
+      let d = new Date().getDay()
 // console.log("解密",decryptRC4("ccf2", "100"));
       const App = {
         data() {
@@ -379,7 +380,7 @@
             if (sendMsg == null) {
               this.sendMsg = 0;
             }
-            this.count = count;
+            this.count = Number(count);
             if (count == null) {
               this.count = 0;
             }
@@ -390,7 +391,13 @@
               isclick = false;
               let ding = this.$refs.ding;
               ding.play();
-              this.gongde = "功德+1";
+              // 疯狂星期寺
+              if (d == 4) {
+                this.gongde = "功德+2";
+              }else{
+                this.gongde = "功德+1";
+              }
+              
 
               ding.addEventListener("ended", () => {
                 isclick = true;
@@ -399,7 +406,13 @@
                 this.gongdejiayi = false;
               });
               this.sf = true;
-              this.count++;
+              // 疯狂星期寺
+              if (d == 4) {
+                this.count +=2 ;
+              }else{
+                this.count++;
+              }
+             
               localStorage.setItem("count",this.count);
             }
           },
