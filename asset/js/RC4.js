@@ -96,17 +96,19 @@
         }
         return result;
     }
-    
     function encryptRC4(data, key) {
         return bytesToHex(RC4Base(strToBytes(data), key));
     }
     function decryptRC4(data, key) {
         return bytesToStr(RC4Base(hexToBytes(data), key));
     }
-    
+    function countEncrypt(count) {
+        let count2 = count+"muyu"
+        return encryptRC4(count2,"muyu")
+    }
 
 
-export default encryptRC4
+export default countEncrypt
 
 
 

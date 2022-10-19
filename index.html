@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
     <title>电子木鱼</title>
     <link rel="stylesheet" href="./asset/css/default.css" />
     <link rel="shortcut icon" href="./asset/img/icon.jpg" />
@@ -108,7 +111,7 @@
         .feedBack div {
           text-align: center;
         }
-        .version{
+        .version {
           position: absolute;
           right: 8%;
         }
@@ -210,11 +213,10 @@
         .feedBack div {
           text-align: center;
         }
-        .version{
+        .version {
           position: absolute;
           right: 8%;
         }
-        
       }
       /* 木鱼 */
       @keyframes suofang {
@@ -248,6 +250,9 @@
       [v-cloak] {
         display: none;
       }
+      .el-message-box {
+        --el-messagebox-width: 320px;
+      }
     </style>
   </head>
   <body>
@@ -274,7 +279,7 @@
       <!-- 功德录 -->
       <div class="gongdeLuBox" v-show="gongdeLuBox">
         <div class="close" @click="closeGD"></div>
-        <h1> {{ListOfQualities}} </h1>
+        <h1>{{ListOfQualities}}</h1>
         <br />
         <div class="userName" v-for="(item,index) in Data" :key="index">
           <div>{{index+1}}.&nbsp;&nbsp;{{item.userName}}</div>
@@ -333,10 +338,9 @@
     <!-- 引入组件库 -->
     <script src="./asset/js/elementUI.js"></script>
     <script type="module">
-   import encryptRC4 from './asset/js/RC4.js';
+      import countEncrypt from "./asset/js/RC4.js";
       let isclick = true;
-      let d = new Date().getDay()
-// console.log("解密",decryptRC4("ccf2", "100"));
+      let d = new Date().getDay();
       const App = {
         data() {
           return {
@@ -350,10 +354,11 @@
             isCommit: "",
             text: "",
             sendMsg: 0,
-            ListOfQualities:""
+            ListOfQualities: "",
           };
         },
         created() {
+          this.crazyTemple();
           this.sendMsg = localStorage.getItem("sendMsg");
           this.getData();
           this.GetFristTime();
@@ -361,6 +366,7 @@
         },
         mounted() {
           this.dangDang();
+        
         },
         methods: {
           // 总功德录数据
@@ -386,6 +392,8 @@
             }
           },
           chuang() {
+        
+           if (this.count < 10000) {
             if (isclick) {
               this.gongdejiayi = true;
               isclick = false;
@@ -394,10 +402,9 @@
               // 疯狂星期寺
               if (d == 4) {
                 this.gongde = "功德+2";
-              }else{
+              } else {
                 this.gongde = "功德+1";
               }
-              
 
               ding.addEventListener("ended", () => {
                 isclick = true;
@@ -408,22 +415,23 @@
               this.sf = true;
               // 疯狂星期寺
               if (d == 4) {
-                this.count +=2 ;
-              }else{
-                this.count++;
+                this.count += 2;
+              } else {
+                this.count += 1;
               }
-             
-              localStorage.setItem("count",this.count);
+
+              localStorage.setItem("count", this.count);
             }
+           }
           },
-           openGD() {
+          openGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
-            this.ListOfQualities = "功德录"
+            this.ListOfQualities = "功德录";
             this.getData();
           },
-           TodayGD(){
+          TodayGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
-            this.ListOfQualities = "今日功德榜"
+            this.ListOfQualities = "今日功德榜";
             this.getTodayData();
           },
           closeGD() {
@@ -442,22 +450,21 @@
           },
           // 上传功德
           GDbtn() {
-            if (this.sendMsg == 0) {
+            if (this.sendMsg == 0 &&this.count < 10000) {
               // 用户储存当前时间
               localStorage.setItem("sendMsg", 1);
               this.sendMsg = 1;
               this.isCommit = true;
-              // 带有加密的敲击数字
-              /* aixos.post(url,data:{
-                  text:this.text,
-                  count:encryptRC4(this.count)
-              }) */
+             
               this.$message({
                 message: "恭喜你，功德上传成功",
                 type: "success",
               });
               this.text = "";
-            } else {
+            }else if(this.sendMsg == 0 &&this.count > 10000){
+              this.$message.error("佛祖面前敢作弊？不怕报应？");
+            }
+            else {
               this.$message.error("一天只能上传一次哦");
               this.text = "";
             }
@@ -494,6 +501,17 @@
             localStorage.setItem("CLEARTIME", CLEARTIME);
             localStorage.setItem("nextDay", true);
           },
+          crazyTemple() {
+            if (d == 4) {
+              this.$alert(
+                "今天是疯狂星期寺活动！功德翻倍！！！",
+                "疯狂星期寺",
+                {
+                  confirmButtonText: "确定",
+                }
+              );
+            }
+          },
         },
         watch: {
           text(newName, oldName) {
@@ -503,6 +521,14 @@
               this.isCommit = true;
             }
           },
+          count(newName, oldName){
+            if(newName == 10000){
+              this.$message({
+                message: "恭喜你，今日功德圆满",
+                type: "success",
+              });
+          }
+          }
         },
       };
       const app = Vue.createApp(App);
