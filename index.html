@@ -258,7 +258,7 @@
   <body>
     <div id="app" v-cloak>
       <!-- 敲击次数 -->
-      <div class="qiaoji">
+      <div class="qiaoji" v-show="main">
         <h2>今日敲击次数</h2>
         <br />
         <h2>{{count}}</h2>
@@ -266,12 +266,12 @@
       <!-- 功德 -->
       <div class="gongde" :class="{gongdejiayi}">{{gongde}}</div>
       <!-- 木鱼 -->
-      <div class="muyu" :class="{sf}" @click="chuang">
+      <div class="muyu" :class="{sf}" @click="chuang" v-show="main">
         <img src="./asset/img/muyu.jpg" />
       </div>
       <audio ref="ding" src="./asset/audio/muyu.mp3"></audio>
       <!-- 提交与展示功德录 -->
-      <div class="btns">
+      <div class="btns" v-show="main">
         <el-button type="warning" @click="openGD">功德录</el-button>
         <el-button type="success" @click="commitGD">上传功德</el-button>
         <el-button type="warning" @click="TodayGD">今日功德</el-button>
@@ -328,7 +328,7 @@
         </div>
       </div>
       <!-- 版本号 -->
-      <div class="version">version:1.0.5</div>
+      <div class="version">version:1.0.6</div>
     </div>
     <!-- 导入 Vue -->
     <script src="./asset/js/Vue.js"></script>
@@ -338,12 +338,13 @@
     <!-- 引入组件库 -->
     <script src="./asset/js/elementUI.js"></script>
     <script type="module">
-      import countEncrypt from "./asset/js/RC4.js";
+      import { countEncrypt, decryptRC4, encryptRC4 } from "./asset/js/RC4.js";
       let isclick = true;
       let d = new Date().getDay();
       const App = {
         data() {
           return {
+            main: true,
             count: 0,
             sf: false,
             gongdejiayi: false,
@@ -358,15 +359,11 @@
           };
         },
         created() {
-          this.crazyTemple();
-          this.sendMsg = localStorage.getItem("sendMsg");
           this.getData();
           this.GetFristTime();
           this.Time();
-        },
-        mounted() {
           this.dangDang();
-        
+          this.crazyTemple();
         },
         methods: {
           // 总功德录数据
@@ -382,47 +379,59 @@
           // 敲击次数
           dangDang() {
             let count = localStorage.getItem("count");
+            if (count == null) {
+              localStorage.setItem("count", encryptRC4("0", "muyu20221020"));
+            }
+            count = localStorage.getItem("count");
+            let counts = decryptRC4(count, "muyu20221020");
+              if (Object.is(Number(counts),NaN)) {
+                // this.$message.error("佛祖面前都作弊，真不怕遭报应啊。");
+                
+                // this.main = false;
+                location.href = "https://tieba.baidu.com/f?kw=%E5%9C%B0%E7%8B%B1%E7%AC%91%E8%AF%9D&ie=utf-8&pn=100"
+              }
+            
+
             let sendMsg = localStorage.getItem("sendMsg");
             if (sendMsg == null) {
               this.sendMsg = 0;
             }
-            this.count = Number(count);
-            if (count == null) {
+            this.count = Number(counts);
+            if (counts == null) {
               this.count = 0;
             }
           },
           chuang() {
-        
-           if (this.count < 10000) {
-            if (isclick) {
-              this.gongdejiayi = true;
-              isclick = false;
-              let ding = this.$refs.ding;
-              ding.play();
-              // 疯狂星期寺
-              if (d == 4) {
-                this.gongde = "功德+2";
-              } else {
-                this.gongde = "功德+1";
-              }
+            if (this.count < 10000) {
+              if (isclick) {
+                this.gongdejiayi = true;
+                isclick = false;
+                let ding = this.$refs.ding;
+                ding.play();
+                // 疯狂星期寺
+                if (d == 4) {
+                  this.gongde = "功德+2";
+                } else {
+                  this.gongde = "功德+1";
+                }
 
-              ding.addEventListener("ended", () => {
-                isclick = true;
-                this.sf = false;
-                this.gongde = "";
-                this.gongdejiayi = false;
-              });
-              this.sf = true;
-              // 疯狂星期寺
-              if (d == 4) {
-                this.count += 2;
-              } else {
-                this.count += 1;
+                ding.addEventListener("ended", () => {
+                  isclick = true;
+                  this.sf = false;
+                  this.gongde = "";
+                  this.gongdejiayi = false;
+                });
+                this.sf = true;
+                // 疯狂星期寺
+                if (d == 4) {
+                  this.count += 2;
+                } else {
+                  this.count += 1;
+                }
+                let str = this.count.toString();
+                localStorage.setItem("count", encryptRC4(str, "muyu20221020"));
               }
-
-              localStorage.setItem("count", this.count);
             }
-           }
           },
           openGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
@@ -450,21 +459,18 @@
           },
           // 上传功德
           GDbtn() {
-            if (this.sendMsg == 0 &&this.count < 10000) {
+            if (this.sendMsg == 0) {
               // 用户储存当前时间
               localStorage.setItem("sendMsg", 1);
               this.sendMsg = 1;
               this.isCommit = true;
-             
+
               this.$message({
                 message: "恭喜你，功德上传成功",
                 type: "success",
               });
               this.text = "";
-            }else if(this.sendMsg == 0 &&this.count > 10000){
-              this.$message.error("佛祖面前敢作弊？不怕报应？");
-            }
-            else {
+            } else {
               this.$message.error("一天只能上传一次哦");
               this.text = "";
             }
@@ -476,7 +482,7 @@
             let CLEARTIME = localStorage.getItem("CLEARTIME");
             let count = localStorage.getItem("count");
             if (date > CLEARTIME) {
-              localStorage.setItem("count", 0);
+              localStorage.setItem("count", encryptRC4("0", "muyu20221020"));
               localStorage.setItem("sendMsg", 0);
               localStorage.setItem("nextDay", false);
             }
@@ -502,7 +508,7 @@
             localStorage.setItem("nextDay", true);
           },
           crazyTemple() {
-            if (d == 4) {
+            if (d == 4 && this.main == true) {
               this.$alert(
                 "今天是疯狂星期寺活动！功德翻倍！！！",
                 "疯狂星期寺",
@@ -521,14 +527,14 @@
               this.isCommit = true;
             }
           },
-          count(newName, oldName){
-            if(newName == 10000){
-              this.$message({
-                message: "恭喜你，今日功德圆满",
-                type: "success",
-              });
-          }
-          }
+          // count(newName, oldName){
+          //   if(newName == 10000){
+          //     this.$message({
+          //       message: "恭喜你，今日功德圆满",
+          //       type: "success",
+          //     });
+          // }
+          // }
         },
       };
       const app = Vue.createApp(App);

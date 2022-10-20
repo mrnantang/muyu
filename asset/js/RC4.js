@@ -107,8 +107,11 @@
         return encryptRC4(count2,"muyu")
     }
 
-
-export default countEncrypt
+export {
+    countEncrypt,
+    decryptRC4,
+    encryptRC4
+} 
 
 
 
