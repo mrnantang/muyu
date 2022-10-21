@@ -47,13 +47,13 @@
         }
         .gongdeLuBox {
           position: absolute;
-          width: 80%;
+          width: 90%;
           height: 600px;
           top: 15%;
           left: 50%;
           transform: translateX(-50%);
           border: 1px solid white;
-          background-color: black;
+          background-color:  #000000;
           z-index: 3;
           animation: showBox 0.5s;
           overflow-y: scroll;
@@ -62,12 +62,12 @@
           text-align: center;
         }
         .userName {
-          width: 90%;
+          width: 95%;
           height: 50px;
           line-height: 50px;
           padding-left: 8px;
           padding-right: 8px;
-          background-color: gray;
+          background-color: #606266;
           border-radius: 5px;
           font-size: 18px;
           margin: 1% auto 0;
@@ -78,7 +78,20 @@
         .userName:nth-child(4) {
           font-size: 25px;
           font-weight: bold;
-          color: gold;
+          color: #000000;
+          background-color: #ff9a0a;
+        }
+        .userName:nth-child(5) {
+          font-size: 23px;
+          font-weight: 600;
+          color: #000000;
+          background-color: silver;
+        }
+        .userName:nth-child(6) {
+          font-size: 21px;
+          font-weight: 500;
+          color: #000000;
+          background-color:#eebe77;
         }
         .btns {
           display: flex;
@@ -150,7 +163,7 @@
         }
         .gongdeLuBox {
           position: absolute;
-          width: 30%;
+          width: 50%;
           height: 625px;
           top: 15%;
           left: 50%;
@@ -169,7 +182,7 @@
           line-height: 45px;
           padding-left: 8px;
           padding-right: 8px;
-          background-color: gray;
+          background-color: #606266;
           border-radius: 5px;
           font-size: 18px;
           margin: 1% auto 0;
@@ -180,7 +193,20 @@
         .userName:nth-child(4) {
           font-size: 25px;
           font-weight: bold;
-          color: gold;
+          color: #000000;
+          background-color: #ff9a0a;
+        }
+        .userName:nth-child(5) {
+          font-size: 23px;
+          font-weight: 600;
+          color: #000000;
+          background-color: silver;
+        }
+        .userName:nth-child(6) {
+          font-size: 21px;
+          font-weight: 500;
+          color: #000000;
+          background-color:#eebe77;
         }
         .btns {
           display: flex;
@@ -304,7 +330,7 @@
             type="text"
             placeholder="请输入名字"
             v-model.trim="text"
-            maxlength="10"
+            maxlength="8"
             show-word-limit
           >
           </el-input>
@@ -328,7 +354,7 @@
         </div>
       </div>
       <!-- 版本号 -->
-      <div class="version">version:1.0.6</div>
+      <div class="version">version:1.1.0</div>
     </div>
     <!-- 导入 Vue -->
     <script src="./asset/js/Vue.js"></script>
@@ -337,8 +363,8 @@
     <script src="./asset/js/BanZoom.js"></script>
     <!-- 引入组件库 -->
     <script src="./asset/js/elementUI.js"></script>
+    <script src="asset/js/jjb.js"></script>
     <script type="module">
-      import { countEncrypt, decryptRC4, encryptRC4 } from "./asset/js/RC4.js";
       let isclick = true;
       let d = new Date().getDay();
       const App = {
@@ -359,6 +385,7 @@
           };
         },
         created() {
+
           this.getData();
           this.GetFristTime();
           this.Time();
@@ -368,33 +395,32 @@
         methods: {
           // 总功德录数据
           async getData() {
-            const { data } = await axios.get("./asset/test.json");
-            this.Data = data.userBox;
+            const { data } = await axios.get("rankingList");
+            this.Data = data.data;
           },
           // 今日功德数据
           async getTodayData() {
-            const { data } = await axios.get("./asset/test.json");
-            this.Data = data.userBox;
+            const { data } = await axios.get("rankingListDate");
+            this.Data = data.data;
           },
           // 敲击次数
           dangDang() {
             let count = localStorage.getItem("count");
+            let sendMsg = localStorage.getItem("sendMsg");
             if (count == null) {
-              localStorage.setItem("count", encryptRC4("0", "muyu20221020"));
+              localStorage.setItem("count", qqq("0"));
             }
             count = localStorage.getItem("count");
-            let counts = decryptRC4(count, "muyu20221020");
+            let counts = jjj(count);
               if (Object.is(Number(counts),NaN)) {
-                // this.$message.error("佛祖面前都作弊，真不怕遭报应啊。");
-                
-                // this.main = false;
-                location.href = "https://tieba.baidu.com/f?kw=%E5%9C%B0%E7%8B%B1%E7%AC%91%E8%AF%9D&ie=utf-8&pn=100"
+                this.$message.error("佛祖面前都作弊，真不怕遭报应啊。");
+                this.main = false;
+                location.href = "http://www.wchscu.cn/department_sjwk.html"
               }
-            
-
-            let sendMsg = localStorage.getItem("sendMsg");
-            if (sendMsg == null) {
+            if (sendMsg === null) {
               this.sendMsg = 0;
+            }else{
+              this.sendMsg = localStorage.getItem("sendMsg");
             }
             this.count = Number(counts);
             if (counts == null) {
@@ -429,7 +455,7 @@
                   this.count += 1;
                 }
                 let str = this.count.toString();
-                localStorage.setItem("count", encryptRC4(str, "muyu20221020"));
+                localStorage.setItem("count", qqq(str));
               }
             }
           },
@@ -459,17 +485,24 @@
           },
           // 上传功德
           GDbtn() {
+            console.log(this.sendMsg);
             if (this.sendMsg == 0) {
               // 用户储存当前时间
               localStorage.setItem("sendMsg", 1);
               this.sendMsg = 1;
               this.isCommit = true;
-
-              this.$message({
-                message: "恭喜你，功德上传成功",
-                type: "success",
-              });
-              this.text = "";
+              const params = new URLSearchParams();
+              params.append("userName",this.text);
+              params.append("count",countEncrypt(qqq(this.count+"")));
+              axios.post("submit",params).then(res=>{
+                this.$message({
+                  message: "恭喜你，功德上传成功",
+                  type: "success",
+                });
+                this.text = "";
+              }).catch(err=>{
+                console.log(err)
+              })
             } else {
               this.$message.error("一天只能上传一次哦");
               this.text = "";
@@ -482,7 +515,7 @@
             let CLEARTIME = localStorage.getItem("CLEARTIME");
             let count = localStorage.getItem("count");
             if (date > CLEARTIME) {
-              localStorage.setItem("count", encryptRC4("0", "muyu20221020"));
+              localStorage.setItem("count", qqq("0"));
               localStorage.setItem("sendMsg", 0);
               localStorage.setItem("nextDay", false);
             }
@@ -527,14 +560,6 @@
               this.isCommit = true;
             }
           },
-          // count(newName, oldName){
-          //   if(newName == 10000){
-          //     this.$message({
-          //       message: "恭喜你，今日功德圆满",
-          //       type: "success",
-          //     });
-          // }
-          // }
         },
       };
       const app = Vue.createApp(App);
