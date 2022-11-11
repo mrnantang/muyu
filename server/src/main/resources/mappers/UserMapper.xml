@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.muyu.model.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.test.muyu.model.pojo.User">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="username" jdbcType="VARCHAR" property="userName" />
+        <result column="count" jdbcType="INTEGER" property="count" />
+        <result column="create_time" jdbcType="INTEGER" property="createTime" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, userName, `count`,create_time
+    </sql>
+    <insert id="insertUserData" parameterType="com.test.muyu.model.pojo.User">
+        insert into user (id, userName, count )
+        values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER})
+    </insert>
+    <insert id="inertTodayRankingList" parameterType="com.test.muyu.model.pojo.User">
+        insert into today_user (id, userName, count )
+        values (#{id,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER})
+    </insert>
+    <update id="updateUser" parameterType="com.test.muyu.model.pojo.User">
+        update user
+        set username = #{userName,jdbcType=VARCHAR},
+            `count` = #{count,jdbcType=INTEGER}
+        where username = #{userName,jdbcType=VARCHAR}
+    </update>
+    <delete id="deleteRankingList">
+        delete from today_user
+    </delete>
+    <select id="selectByName" parameterType="java.lang.String" resultType="com.test.muyu.model.pojo.User">
+        select * from user where userName = #{userName,jdbcType=VARCHAR}
+    </select>
+    <select id="selectRankingList" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from user ORDER BY count DESC limit 0,10
+    </select>
+    <select id="selectRankingForDate" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from today_user ORDER BY count DESC limit 0,10
+    </select>
+</mapper>

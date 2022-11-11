@@ -1,0 +1,266 @@
+/* 平板以及手机的尺寸大小 */
+@media screen and (max-width: 530px) {
+  body {
+    background-color: black;
+    color: #fff;
+  }
+  .qiaoji {
+    margin-top: 10%;
+    width: 100%;
+    height: 30vh;
+    text-align: center;
+  }
+  .muyu {
+    width: 211px;
+    height: 211px;
+    margin: 0 auto;
+  }
+  .sf {
+    animation: suofang 0.3s;
+  }
+  .gongde {
+    position: absolute;
+    left: 70%;
+    top: 24%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 30px;
+    font-size: 21px;
+  }
+  .gongdejiayi {
+    animation: textMove 0.6s;
+  }
+  .gongdeLuBox {
+    position: absolute;
+    width: 90%;
+    height: 600px;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid white;
+    background-color:  #000000;
+    z-index: 3;
+    animation: showBox 0.5s;
+    overflow-y: scroll;
+  }
+  .gongdeLuBox h1 {
+    text-align: center;
+  }
+  .userName {
+    width: 95%;
+    height: 50px;
+    line-height: 50px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: #606266;
+    border-radius: 5px;
+    font-size: 18px;
+    margin: 1% auto 0;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+  }
+  .userName:nth-child(4) {
+    font-size: 25px;
+    font-weight: bold;
+    color: #000000;
+    background-color: #ff9a0a;
+  }
+  .userName:nth-child(5) {
+    font-size: 23px;
+    font-weight: 600;
+    color: #000000;
+    background-color: silver;
+  }
+  .userName:nth-child(6) {
+    font-size: 21px;
+    font-weight: 500;
+    color: #000000;
+    background-color:#eebe77;
+  }
+  .btns {
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
+    margin: 40% auto 5%;
+  }
+  .close {
+    position: absolute;
+    right: 3%;
+    top: 1%;
+    width: 32px;
+    height: 32px;
+    background: url("asset/img/关闭.png") no-repeat;
+  }
+  .userNameBox {
+    width: 70%;
+    margin: 20% auto 0;
+  }
+  .shangchuanGD {
+    width: 70%;
+    margin: 20% auto 0;
+    text-align: center;
+  }
+  /* 反馈 */
+  .feedBack {
+    width: 90%;
+    margin: 20% auto 0;
+  }
+  .feedBack div {
+    text-align: center;
+  }
+  .version {
+    position: absolute;
+    right: 8%;
+  }
+}
+/* 电脑尺寸大小 */
+@media screen and (min-width: 531px) {
+  body {
+    background-color: black;
+    color: #fff;
+  }
+  .qiaoji {
+    margin-top: 5%;
+    width: 100%;
+    height: 25vh;
+    text-align: center;
+  }
+  .muyu {
+    width: 211px;
+    height: 211px;
+    margin: 0 auto;
+  }
+  .sf {
+    animation: suofang 0.3s;
+  }
+  .gongde {
+    position: absolute;
+    left: 60%;
+    top: 24%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 30px;
+    font-size: 21px;
+  }
+  .gongdejiayi {
+    animation: textMove 0.6s;
+  }
+  .gongdeLuBox {
+    position: absolute;
+    width: 50%;
+    height: 625px;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid white;
+    background-color: black;
+    z-index: 3;
+    animation: showBox 0.5s;
+  }
+  .gongdeLuBox h1 {
+    text-align: center;
+  }
+  .userName {
+    width: 70%;
+    height: 45px;
+    line-height: 45px;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: #606266;
+    border-radius: 5px;
+    font-size: 18px;
+    margin: 1% auto 0;
+    display: flex;
+    justify-content: space-between;
+    color: white;
+  }
+  .userName:nth-child(4) {
+    font-size: 25px;
+    font-weight: bold;
+    color: #000000;
+    background-color: #ff9a0a;
+  }
+  .userName:nth-child(5) {
+    font-size: 23px;
+    font-weight: 600;
+    color: #000000;
+    background-color: silver;
+  }
+  .userName:nth-child(6) {
+    font-size: 21px;
+    font-weight: 500;
+    color: #000000;
+    background-color:#eebe77;
+  }
+  .btns {
+    display: flex;
+    justify-content: space-between;
+    width: 30%;
+    margin: 10% auto 5%;
+  }
+  .close {
+    position: absolute;
+    right: 3%;
+    top: 1%;
+    width: 32px;
+    height: 32px;
+    background: url("asset/img/关闭.png") no-repeat;
+  }
+  .userNameBox {
+    width: 70%;
+    margin: 20% auto 0;
+  }
+  .shangchuanGD {
+    width: 70%;
+    margin: 20% auto 0;
+    text-align: center;
+  }
+  /* 反馈 */
+  .feedBack {
+    width: 90%;
+    margin: 20% auto 0;
+  }
+  .feedBack div {
+    text-align: center;
+  }
+  .version {
+    position: absolute;
+    right: 8%;
+  }
+}
+/* 木鱼 */
+@keyframes suofang {
+  50% {
+    transform: scale(0.8, 0.8);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+/* 字体向上消失 */
+@keyframes textMove {
+  from {
+    top: 24%;
+    opacity: 1;
+  }
+  to {
+    top: 22%;
+    opacity: 0;
+  }
+}
+/* 弹窗出现动画 */
+@keyframes showBox {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+[v-cloak] {
+  display: none;
+}
+.el-message-box {
+  --el-messagebox-width: 320px;
+}
