@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="./asset/css/default.css" />
     <link rel="shortcut icon" href="./asset/img/icon.jpg" />
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="./asset/css/element.css" />
-   <link rel="stylesheet" href="./asset/css/index.css">
+    <link rel="stylesheet" href="./asset/css/element.css"/>
+    <link rel="stylesheet" href="./asset/css/index.css">
   </head>
   <body>
     <div id="app" v-cloak>
@@ -31,9 +31,9 @@
       <audio ref="ding" src="./asset/audio/muyu.mp3"></audio>
       <!-- 提交与展示功德录 -->
       <div class="btns" v-show="main">
-        <el-button type="warning" @click="openGD">功德录</el-button>
-        <el-button type="success" @click="commitGD">上传功德</el-button>
-        <el-button type="warning" @click="TodayGD">今日功德</el-button>
+        <el-button disabled type="warning" @click="openGD">功德录</el-button>
+        <el-button disabled type="success" @click="commitGD">上传功德</el-button>
+        <el-button disabled type="warning" @click="TodayGD">今日功德</el-button>
       </div>
       <!-- 功德录 -->
       <div class="gongdeLuBox" v-show="gongdeLuBox">
@@ -87,7 +87,7 @@
         </div>
       </div>
       <!-- 版本号 -->
-      <div class="version">version:1.1.0</div>
+      <div class="version">version:1.3.0</div>
     </div>
     <!-- 导入 Vue -->
     <script src="./asset/js/Vue.js"></script>
@@ -119,24 +119,21 @@
         },
         created() {
 
-          this.getData();
+          // this.getData();
           this.GetFristTime();
           this.Time();
           this.dangDang();
-          this.crazyTemple();
+          // this.crazyTemple();
         },
         methods: {
-          // 总功德录数据
           async getData() {
             const { data } = await axios.get("rankingList");
             this.Data = data.data;
           },
-          // 今日功德数据
           async getTodayData() {
             const { data } = await axios.get("rankingListDate");
             this.Data = data.data;
           },
-          // 敲击次数
           dangDang() {
             let count = localStorage.getItem("count");
             let sendMsg = localStorage.getItem("sendMsg");
@@ -161,7 +158,6 @@
             }
           },
           chuang() {
-            if (this.count < 10000) {
               if (isclick) {
                 this.gongdejiayi = true;
                 isclick = false;
@@ -190,7 +186,6 @@
                 let str = this.count.toString();
                 localStorage.setItem("count", qqq(str));
               }
-            }
           },
           openGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
@@ -200,12 +195,11 @@
           TodayGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
             this.ListOfQualities = "今日功德榜";
-            this.getTodayData();
+            // this.getTodayData();
           },
           closeGD() {
             this.gongdeLuBox = !this.gongdeLuBox;
           },
-          // 上传功德盒子
           commitGD() {
             this.shuangchuanBox = !this.shuangchuanBox;
             this.text = "";
@@ -216,7 +210,6 @@
           closeGDL() {
             this.shuangchuanBox = !this.shuangchuanBox;
           },
-          // 上传功德
           GDbtn() {
             console.log(this.sendMsg);
             if (this.sendMsg == 0) {
@@ -253,9 +246,7 @@
               localStorage.setItem("nextDay", false);
             }
           },
-          // 以下是获取当天23点的时间。
           GetFristTime() {
-            // 是否到了第二天
             let nextDay = localStorage.getItem("nextDay");
             if (nextDay == null) {
               localStorage.setItem("nextDay", false);
