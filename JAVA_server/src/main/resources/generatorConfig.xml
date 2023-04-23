@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+  <classPathEntry
+    location="E:\Java\mall\src\main\resources\mysql-connector-java-8.0.18.jar"/>
+  <context id="MysqlTables" targetRuntime="MyBatis3">
+    <property name="autoDelimitKeywords" value="true"/>
+    <property name="beginningDelimiter" value="`"/>
+    <property name="endingDelimiter" value="`"/>
+    <commentGenerator>
+      <property name="suppressDate" value="true"/>
+      <property name="suppressAllComments" value="true"/>
+    </commentGenerator>
+    <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+      connectionURL="jdbc:mysql://localhost:3306/muyu?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull&amp;serverTimezone=Asia/Shanghai"
+      userId="root"
+      password="lsk200224">
+      <property name="nullCatalogMeansCurrent" value="true"/>
+    </jdbcConnection>
+    <javaTypeResolver>
+      <property name="forceBigDecimals" value="false"/>
+    </javaTypeResolver>
+  </context>
+</generatorConfiguration>

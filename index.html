@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <title>电子木鱼</title>
+    <link rel="stylesheet" href="./asset/css/default.css" />
+    <link rel="shortcut icon" href="./asset/img/icon.jpg" />
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="./asset/css/element.css" />
+    <link rel="stylesheet" href="./asset/css/index.css" />
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <!-- 敲击次数 -->
+      <div class="qiaoji" v-show="main">
+        <h2>今日敲击次数</h2>
+        <br />
+        <h2>{{count}}</h2>
+      </div>
+      <!-- 功德 -->
+      <div class="gongde" :class="{gongdejiayi}">{{gongde}}</div>
+      <!-- 木鱼 -->
+      <div class="muyu" :class="{sf}" @click="chuang" v-show="main">
+        <img src="./asset/img/muyu.jpg" />
+      </div>
+      <audio ref="ding" src="./asset/audio/muyu.mp3"></audio>
+      <!-- 提交与展示功德录 -->
+      <div class="btns" v-show="main">
+        <el-button type="warning" @click="openGD">功德录</el-button>
+        <el-button type="success" @click="commitGD">上传功德</el-button>
+        <el-button type="warning" @click="TodayGD">今日功德</el-button>
+      </div>
+      <!-- 功德录 -->
+      <div class="gongdeLuBox" v-show="gongdeLuBox">
+        <div class="close" @click="closeGD"></div>
+        <h1>{{ListOfQualities}}</h1>
+        <br />
+        <div class="userName" v-for="(item,index) in Data" :key="index">
+          <div>{{index+1}}.&nbsp;&nbsp;{{item.username}}</div>
+          <div>{{item.value}}</div>
+        </div>
+      </div>
+      <!-- 上传功德 -->
+      <div class="gongdeLuBox" v-show="shuangchuanBox">
+        <div class="close" @click="closeGDL"></div>
+        <div
+          style="
+            text-align: center;
+            width: 90%;
+            margin: 30% auto 0;
+            font-size: 30px;
+          "
+        >
+          一天只能上传一次哦
+        </div>
+        <div class="userNameBox">
+          <el-input
+            type="text"
+            placeholder="请输入名字"
+            v-model.trim="text"
+            maxlength="8"
+            show-word-limit
+          >
+          </el-input>
+        </div>
+        <div class="shangchuanGD">
+          <el-button
+            type="success"
+            :plain="true"
+            :disabled="isCommit"
+            @click="GDbtn"
+            >上传功德</el-button
+          >
+        </div>
+        <!-- 反馈 -->
+        <div class="feedBack">
+          <h3>BUG反馈：</h3>
+          <br />
+          <div>前端 : 1210946999@qq.com</div>
+          <div>后端 : 1063720909@qq.com</div>
+          <div style="color: pink">美术制作 :多多</div>
+        </div>
+      </div>
+      <!-- 版本号 -->
+      <div class="version">version:1.4.0</div>
+    </div>
+    <!-- 导入 Vue -->
+    <script src="./asset/js/Vue.js"></script>
+    <script src="./asset/js/axios.js"></script>
+    <!-- 禁止IOS用户双击缩放 -->
+    <script src="./asset/js/BanZoom.js"></script>
+    <!-- 引入组件库 -->
+    <script src="./asset/js/elementUI.js"></script>
+    <script src="asset/js/jjb.js"></script>
+    <script type="module">
+      let commitApi = "http://127.0.0.1:8081/api/commit";
+      let todayMorality = "http://127.0.0.1:8081/api/todayMorality";
+      let totalMorality = "http://127.0.0.1:8081/api/totalMorality";
+      let isclick = true;
+      let d = new Date().getDay();
+      const App = {
+        data() {
+          return {
+            main: true,
+            count: 0,
+            sf: false,
+            gongdejiayi: false,
+            gongde: "",
+            Data: [],
+            gongdeLuBox: false,
+            shuangchuanBox: false,
+            isCommit: "",
+            text: "",
+            sendMsg: 0,
+            ListOfQualities: "",
+          };
+        },
+        created() {
+          this.GetFristTime();
+          this.Time();
+          this.dangDang();
+          this.crazyTemple();
+        },
+        methods: {
+          // ====express后端接口====
+          async getData() {
+            const { data } = await axios.post(totalMorality);
+            if (data.status == 200) {
+              this.Data = data.data;
+            }
+          },
+          async getTodayData() {
+            const { data } = await axios.post(todayMorality);
+            if (data.status == 200) {
+              this.Data = data.data;
+            }
+          },
+          // ====JAVA后端接口====
+          /*   async getData() {
+            const { data } = await axios.get("rankingList");
+            this.Data = data.data;
+          },
+          async getTodayData() {
+            const { data } = await axios.get("rankingListDate");
+            this.Data = data.data;
+          }, */
+          dangDang() {
+            let count = localStorage.getItem("count");
+            let sendMsg = localStorage.getItem("sendMsg");
+            if (count == null) {
+              localStorage.setItem("count", qqq("0"));
+            }
+            count = localStorage.getItem("count");
+            let counts = jjj(count);
+            if (Object.is(Number(counts), NaN)) {
+              this.$message.error("佛祖面前都作弊，真不怕遭报应啊。");
+              this.main = false;
+              location.href = "http://www.wchscu.cn/department_sjwk.html";
+            }
+            if (sendMsg === null) {
+              this.sendMsg = 0;
+            } else {
+              this.sendMsg = localStorage.getItem("sendMsg");
+            }
+            this.count = Number(counts);
+            if (counts == null) {
+              this.count = 0;
+            }
+          },
+          chuang() {
+            if (isclick) {
+              this.gongdejiayi = true;
+              isclick = false;
+              let ding = this.$refs.ding;
+              ding.play();
+              // 疯狂星期寺
+              if (d == 4) {
+                this.gongde = "功德+2";
+              } else {
+                this.gongde = "功德+1";
+              }
+
+              ding.addEventListener("ended", () => {
+                isclick = true;
+                this.sf = false;
+                this.gongde = "";
+                this.gongdejiayi = false;
+              });
+              this.sf = true;
+              // 疯狂星期寺
+              if (d == 4) {
+                this.count += 2;
+              } else {
+                this.count += 1;
+              }
+              let str = this.count.toString();
+              localStorage.setItem("count", qqq(str));
+            }
+          },
+          openGD() {
+            this.gongdeLuBox = !this.gongdeLuBox;
+            this.ListOfQualities = "功德录";
+            this.getData();
+          },
+          TodayGD() {
+            this.gongdeLuBox = !this.gongdeLuBox;
+            this.ListOfQualities = "今日功德榜";
+            this.getTodayData();
+          },
+          closeGD() {
+            this.gongdeLuBox = !this.gongdeLuBox;
+          },
+          commitGD() {
+            this.shuangchuanBox = !this.shuangchuanBox;
+            this.text = "";
+            if (this.text == "" || this.count == 0) {
+              this.isCommit = true;
+            }
+          },
+          closeGDL() {
+            this.shuangchuanBox = !this.shuangchuanBox;
+          },
+          // 上传提交
+          async GDbtn() {
+            if (this.sendMsg == 0) {
+              // 用户储存当前时间
+              localStorage.setItem("sendMsg", 1);
+              this.isCommit = true;
+              const params = new URLSearchParams();
+              params.append("userName", this.text);
+              params.append("count", this.count);
+              const { data, msg } = await axios.post(commitApi, params);
+              if (data.status === 200) {
+                this.$message({
+                  message: data.msg,
+                  type: "success",
+                });
+                this.text = "";
+                this.sendMsg = 1;
+              } else if (data.status === 201) {
+                this.$message({
+                  message: data.msg,
+                  type: "error",
+                });
+                this.sendMsg = 0;
+              } else if(data.status === 202){
+                this.$message({
+                  message: data.msg,
+                  type: "error",
+                });
+                this.sendMsg = 0;
+              }
+            } else {
+              this.$message.error("一天只能上传一次哦");
+              this.text = "";
+            }
+          },
+          Time() {
+            // 当前时间
+            const date = new Date().getTime();
+            // 0点的时间
+            let CLEARTIME = localStorage.getItem("CLEARTIME");
+            let count = localStorage.getItem("count");
+            if (date > CLEARTIME) {
+              localStorage.setItem("count", qqq("0"));
+              localStorage.setItem("sendMsg", 0);
+              localStorage.setItem("nextDay", false);
+            }
+          },
+          GetFristTime() {
+            let nextDay = localStorage.getItem("nextDay");
+            if (nextDay == null) {
+              localStorage.setItem("nextDay", false);
+            }
+            nextDay = localStorage.getItem("nextDay");
+            // 当日23点59分59秒的时间戳
+            if (nextDay == "false") {
+              this.getClearTime();
+            }
+          },
+          getClearTime() {
+            const CLEARTIME = new Date(
+              new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1
+            ).getTime();
+            localStorage.setItem("CLEARTIME", CLEARTIME);
+            localStorage.setItem("nextDay", true);
+          },
+          crazyTemple() {
+            if (d == 4 && this.main == true) {
+              this.$alert(
+                "今天是疯狂星期寺活动！功德翻倍！！！",
+                "疯狂星期寺",
+                {
+                  confirmButtonText: "确定",
+                }
+              );
+            }
+          },
+        },
+        watch: {
+          text(newName, oldName) {
+            if (newName !== "") {
+              this.isCommit = false;
+            } else {
+              this.isCommit = true;
+            }
+          },
+        },
+      };
+      const app = Vue.createApp(App);
+      app.use(ElementPlus);
+      app.mount("#app");
+    </script>
+  </body>
+</html>
